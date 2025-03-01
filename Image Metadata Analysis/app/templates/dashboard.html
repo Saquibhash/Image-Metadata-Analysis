@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome, {{ current_user.email }}!</h1>
+
+        <!-- Image Upload Form -->
+        <div class="card">
+            <form method="POST" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+                <label for="file">Upload an image:</label>
+                <input type="file" name="file" required>
+                <button type="submit">Upload Image</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <!-- Filter and Sort Forms aligned to the right -->
+        <div class="filters-container">
+            <!-- Filter Form -->
+            <div class="card filter-form">
+                <form method="GET" action="{{ url_for('dashboard') }}">
+                    <label for="filter">Filter by Format:</label>
+                    <input type="text" id="filter" name="filter" placeholder="Enter image format" value="{{ request.args.get('filter', '') }}">
+                    <button type="submit">Filter</button>
+                </form>
+            </div>
+
+            <!-- Sort Form -->
+            <div class="card sort-form">
+                <form method="GET" action="{{ url_for('dashboard') }}">
+                    <label for="sort">Sort by:</label>
+                    <select id="sort" name="sort">
+                        <option value="timestamp" {% if request.args.get('sort') == 'timestamp' %} selected {% endif %}>Upload Date</option>
+                        <option value="type" {% if request.args.get('sort') == 'type' %} selected {% endif %}>Type</option>
+                        <option value="date_taken" {% if request.args.get('sort') == 'date_taken' %} selected {% endif %}>Date of Picture Taken</option>
+                    </select>
+                    <button type="submit">Sort</button>
+                </form>
+            </div>
+        </div>
+
+        <hr>
+
+        <h2>Your Uploaded Images</h2>
+        <!-- Display list of uploaded images -->
+        <ul>
+            {% for image in images %}
+                <li>
+                    <img src="{{ url_for('static', filename='uploads/' + image.filename) }}" alt="{{ image.filename }}">
+                    <div>
+                        <p><strong>Filename:</strong> {{ image.filename }}</p>
+                        <p><strong>Uploaded on:</strong> {{ image.timestamp }}</p>
+                        <p><strong>Description:</strong> {{ image.image_metadata['Description'] if image.image_metadata.get('Description') else 'N/A' }}</p>
+                        <p><strong>Format:</strong> {{ image.image_metadata['Format'] }}</p>
+                        <p><strong>File Size:</strong> {{ image.image_metadata['File Size'] }}</p>
+                        <p><strong>Dimensions:</strong> {{ image.image_metadata['Dimensions'] }}</p>
+                        <p><strong>Type:</strong> {{ image.image_metadata['Type'] }}</p>
+                        <p><strong>Proportions:</strong> {{ image.image_metadata['Proportions'] }}</p>
+                        <p><strong>Megapixels:</strong> {{ image.image_metadata['Megapixels'] }}</p>
+                        <p><strong>Device:</strong> {{ image.image_metadata['Device'] }}</p>
+                        <p><strong>GPS Coordinates:</strong> {{ image.image_metadata['GPS Coordinates'] if image.image_metadata.get('GPS Coordinates') else 'N/A' }}</p>
+                        <p><strong>Date and Time Taken:</strong> {{ image.image_metadata['Date and Time'] if image.image_metadata.get('Date and Time') else 'N/A' }}</p>
+
+                        <!-- Links to download and edit metadata -->
+                        <a href="{{ url_for('edit_metadata', image_id=image.id) }}">Edit Metadata</a> |
+                        <a href="{{ url_for('download_metadata', image_id=image.id) }}">Download Metadata</a>
+                    </div>
+                </li>
+            {% else %}
+                <p>No images uploaded yet.</p>
+            {% endfor %}
+        </ul>
+
+        <hr>
+
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <footer>
+        <p> SAQUIB HASHMI | UMASSD </p>  
+    </footer>
+</body>
+</html>

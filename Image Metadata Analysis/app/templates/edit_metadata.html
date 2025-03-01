@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Metadata</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Edit Metadata for {{ image.filename }}</h1>
+
+        <div class="card">
+            <form method="POST">
+                <!-- Edit description -->
+                <label for="description">Description:</label>
+                <input type="text" id="description" name="description" value="{{ image.image_metadata.get('Description', '') }}" required>
+
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <a href="{{ url_for('dashboard') }}" class="btn-back">Back to Dashboard</a>
+    </div>
+</body>
+</html>
